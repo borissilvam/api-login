@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -39,19 +40,22 @@ public class SecurityConfig {
                     httpSecuritySessionManagementConfigurer
                             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                             .maximumSessions(1)
+                            .maxSessionsPreventsLogin(true)
                             ;
                 })
 
                 .authorizeHttpRequests(customizeRequests -> {
                     customizeRequests
-                            .requestMatchers(HttpMethod.GET, "/login/api/user/**").hasAnyRole("ADMIN", "AUDITOR")
-                            .requestMatchers(HttpMethod.PUT, "/login/api/user/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/login/api/user/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/login/api/user/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.GET, "/login/api/person/**").hasAnyRole("ADMIN", "AUDITOR")
-                            .requestMatchers(HttpMethod.PUT, "/login/api/person/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/login/api/person/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/login/api/person/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("ADMIN", "AUDITOR")
+                            .requestMatchers(HttpMethod.PUT, "/user/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/user/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/person/**").hasAnyRole("ADMIN", "AUDITOR")
+                            .requestMatchers(HttpMethod.PUT, "/person/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/person/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/person/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/sessions/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/sessions/**").hasRole("ADMIN")
                             .anyRequest()
                             .authenticated();
 
@@ -62,12 +66,12 @@ public class SecurityConfig {
                             .failureHandler(authenticationFailureHandler())
                             ;
                 })
-                .logout(httpSecurityLogoutConfigurer -> {
-                    httpSecurityLogoutConfigurer
-                            .logoutSuccessHandler((request, response, authentication) -> {
-                                saveSessionEvent(authentication.getName(),"logOut");
-                            });
-                })
+                //.logout(httpSecurityLogoutConfigurer -> {
+                  //  httpSecurityLogoutConfigurer
+                    //        .logoutSuccessHandler((request, response, authentication) -> {
+                       //         saveSessionEvent(authentication.getName(),"logOut");
+                         //   });
+                //})
 
                 .httpBasic(Customizer.withDefaults());
         return http.build();
@@ -75,6 +79,14 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler(){
         return new CustomAuthenticationFailureHandler();
+    }
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher(){
+        return new HttpSessionEventPublisher();
+    }
+    @Bean
+    public SessionRegistry sessionRegistry(){
+        return new SessionRegistryImpl();
     }
 
     @Bean

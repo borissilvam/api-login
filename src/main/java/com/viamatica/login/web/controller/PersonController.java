@@ -55,15 +55,18 @@ public class PersonController {
             if (!person.getIdentification().matches("^\\d{10}$")){
                 String mensaje = "El numero de identificación debe contener 10 dijitos";
 
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+                throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
+
             } else if (!person.getIdentification().matches("^\\d+$")) {
                 String mensaje = "El numero de identificación solo debe contener numeros";
 
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
-            } else if (!person.getIdentification().matches("^(?!.*(\\d)\\1{3})\\d{10}$")) {
-                String mensaje = "El numero de identificación solo contiene 4 numeros consecutivos";
+                throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
 
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+            } else if (!person.getIdentification().matches("^(?!.*(\\d)\\1{3})\\d{10}$")) {
+                String mensaje = "El numero de identificación  contiene 4 numeros consecutivos";
+
+                throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
+
             } else {
                 return new ResponseEntity<>(personService.save(person), HttpStatus.CREATED);
             }

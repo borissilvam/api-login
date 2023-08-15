@@ -6,7 +6,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 public class SessionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +28,21 @@ public class SessionEntity {
         this.id = id;
     }
 
+    public String getEventType() {
+        return eventType;
+    }
 
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public LocalDateTime getTimesTamp() {
+        return timesTamp;
+    }
+
+    public void setTimesTamp(LocalDateTime timesTamp) {
+        this.timesTamp = timesTamp;
+    }
 
     public Integer getIdUser() {
         return idUser;

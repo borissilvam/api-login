@@ -50,7 +50,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
            userCrudRepository.save(user.get());
        } else if (user.isPresent() && user.get().isLocked()) {
-           apiError.setFecha(Calendar.getInstance().getTime() );
+
            apiError.setMensaje( "El usuario está bloqueado, contacta con el Administrador");
 
            String jsonResponse = objectMapper.writeValueAsString(apiError);
@@ -62,7 +62,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
            System.out.println("El usuario está bloqueado, contacta con el Administrador");
 
        }else {
-           apiError.setFecha(Calendar.getInstance().getTime() );
+
 
            if (exception instanceof BadCredentialsException) {
                 apiError.setMensaje("La contraseña es incorrecta");

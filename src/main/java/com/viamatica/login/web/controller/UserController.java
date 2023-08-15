@@ -55,26 +55,28 @@ public class UserController {
            String mensaje;
            if (!user.getUserName().matches("^[\\w]+$")){
                mensaje = "En nombre de usuario contiene signos";
-               return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
            }
            else if (userService.getUserByUserName(user.getUserName()).isPresent()) {
                    mensaje = "El nombre de usuario ya esta en uso";
-                   return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
            }
-           else if (!user.getUserName().matches("^(?=.*\\\\d).+$")){
+           else if (!user.getUserName().matches("^(?=.*\\d).+$")){
                mensaje = "El nombre de usuario debe contener al menos un numero";
-               return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
            }
            else if (!user.getUserName().matches("^(?=.*[A-Z]).+$")) {
                mensaje = "El nombre de usuario debe contener al menos una mayúscula";
-               return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
+
            } else if (!user.getUserName().matches("^.{8,20}$")) {
                mensaje = "El nombre de usuario debe contener entre 8 y 20 caracteres";
-               return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
 
            } else if (user.getRolUserList().size() == 2) {
                mensaje = "Esta Persona tiene muchos usuario creador";
-               return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
 
            } else {
                return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);

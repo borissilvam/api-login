@@ -6,10 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,4 +19,14 @@ public class SessionController {
     public ResponseEntity<List<Session>> getSessionByIdUser(@PathVariable("id") int idUser){
         return new ResponseEntity<>(sessionService.getSessionByIdUser(idUser), HttpStatus.OK) ;
     }
+    @GetMapping("/active")
+    public String sesionActive(){
+        return "Tiene una sesiòn activa";
+    }
+    @PostMapping("/close")
+    public ResponseEntity<?> deleteSessionsActives(){
+        sessionService.deleteSessions();
+        return  new ResponseEntity<>("Sesiones cerradas exitosamente", HttpStatus.OK);
+    }
 }
+
